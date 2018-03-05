@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>View Projects</title>
+    <style>
+        #map {
+            height: 100%;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        var map;
+		var total_lat = 0;
+		var total_lng = 0;
+		var total_markers = 0;
+		var icons = {
+          under_review: {
+            icon: "file:///C:/Users/Chris/Desktop/icon_red.png"
+          },
+          approved: {
+            icon: "file:///C:/Users/Chris/Desktop/icon_green.png"
+          },
+          under_construction: {
+            icon: "file:///C:/Users/Chris/Desktop/icon_yellow.png"
+          }
+        };
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 13,
+                center: {
+                    lat: 37.9,
+                    lng: -122.1
+                },
+				mapTypeId: 'roadmap'
+            });
+			addMarker(37.898600, -122.054405, "Stoneyridge Lane Condominiums", "under_construction");
+			addMarker(37.899870, -122.053996, "Stoneyhill Townhomes", "under_construction");
+			addMarker(37.926128, -122.065146, "Geary Road Townhome Condominiums", "under_construction");
+			addMarker(37.917799, -122.075205, "San Luis Subdivision", "under_construction");
+			addMarker(37.911338, -122.066281, "Riviera Apartments (Affordable)", "under_construction");
+			addMarker(37.908904, -122.067965, "Riviera Apartments (Affordable)", "under_construction");
+			addMarker(37.910195, -122.066411, "Riviera Avenue Condos", "under_construction");
+			addMarker(37.916493, -122.055912, "Quail Run Townhome Condominiums", "under_construction");
+			addMarker(37.896363, -122.059641, "Broadway Plaza Promenade Building (Apple) (Phase 3A of B.P. Long-Range Master Plan) Macerich Northwestern", "under_construction");
+			addMarker(37.905438, -122.067543, "W.C. BART Transit Village PHASE 1", "under_construction");
+			addMarker(37.920526, -122.064130, "Diablo Subaru Remodel & Building Addition", "under_construction");
+			addMarker(37.903635, -122.062399, "Walnut Creek Ford Remodel and Addition", "under_construction");
+			addMarker(37.928181, -122.023898, "Ultimate Fieldhouse Expansion", "under_construction");
+			addMarker(37.878819, -122.073898, "Rossmoor Shopping Center Expansion & Remodel", "under_construction");
+			addMarker(37.907914, -122.065767, "Marriott Residence Inn", "under_construction");
+			addMarker(37.895219, -122.055557, "Walnut Creek Depot Building (formerly Vic Stewart’s Restaurant)", "under_construction");
+			addMarker(37.921610, -122.000226, "Carondelet Athletic Complex", "under_construction");
+			addMarker(37.895899, -122.053071, "Analisa Townhomes", "under_construction");
+			addMarker(37.905438, -122.067543, "W.C. BART Transit Village (Mixed Use)", "under_construction");
+			addMarker(37.910919, -122.056024, "Howard Oaks Subdivision", "under_construction");
+			addMarker(37.900449, -122.059241, "Lincoln Avenue Triplex", "approved");
+			addMarker(37.901701, -122.058610, "Parkview Condos", "approved");
+			addMarker(37.899963, -122.069563, "Fifteen24 Residential", "approved");
+			addMarker(37.937227, -122.034533, "Secluded Woods Subdivision", "approved");
+			addMarker(37.905438, -122.067543, "W.C. BART Transit Village (Mixed Use)", "approved");
+			addMarker(37.903823, -122.063539, "F&M Bank", "approved");
+			addMarker(37.919578, -122.064458, "Bali Construction Offices Remodel/Addition", "approved");
+			addMarker(37.894391, -122.051741, "Tiffany Court Memory Care Building", "approved");
+			addMarker(37.919846, -122.023499, "Ruth Bancroft Garden Community Building Veronika Rathert, Canyon Design Building", "approved");
+			addMarker(37.928181, -122.023898, "59-Bed Skilled Nursing Facility", "approved");
+			addMarker(37.928446, -122.019066, "Viamonte Senior Housing/ Residential Care Facility", "approved");
+			addMarker(37.882866, -122.076732, "Byron Park Expansion", "approved");
+			addMarker(37.901809, -122.067654, "St. Paul’s Commons Apartments", "under_review");
+			addMarker(37.930960, -122.053383, "Habitat for Humanity – Las Juntas", "under_review");
+			addMarker(37.918029, -122.071028, "Bay Area Home Builders Subdivision No. 9472", "under_review");
+			addMarker(37.896949, -122.053848, "Coral Homes Duplexes", "under_review");
+			addMarker(37.905438, -122.067543, "WCTV Phase 2 Redesign", "under_review");
+			addMarker(37.911395, -122.065035, "Bentley Motors/Aston-Martin Building", "under_review");
+			addMarker(37.904231, -122.062993, "Nissan Autocom", "under_review");
+			addMarker(37.914423, -122.064483, "Hilton Garden Inn", "under_review");
+			addMarker(37.905438, -122.067543, "WCTV Phase 2 Redesign", "under_review");
+			addMarker(37.896684, -122.061045, "The Foundry (Food Hall)", "under_review");
+			addMarker(37.926321, -122.022333, "Bass Medical Building Loading Dock Demolition & Restoration", "under_review");
+			addMarker(37.895320, -122.058362, "Lifetime Athletic (Broadway Plaza Long- Range Master Plan Phase 2B)", "under_review");
+			addMarker(37.938073, -122.060749, "Volvo Cars of Walnut Creek", "under_review");
+			addMarker(37.930282, -122.024619, "Contra Costa School of Performing Arts", "under_review");
+			addMarker(37.933009, -122.020521, "Tony La Russa’s Animal Rescue Foundation (ARF) Expansion", "under_review");
+			map.setCenter({lat: total_lat/total_markers, lng: total_lng/total_markers});
+        }
+		
+		var recent_window;
+        function addMarker(latitude, longitude, information, status) {
+			total_lat += latitude;
+			total_lng += longitude;
+			total_markers += 1;
+            var infowindow = new google.maps.InfoWindow({
+                content: information
+            });
+            var marker = new google.maps.Marker({
+                position: {
+                    lat: latitude,
+                    lng: longitude
+                },
+				icon: icons[status].icon,
+                map: map
+            });
+
+            marker.addListener('click', function() {
+				if(recent_window) {
+					recent_window.close();
+				}
+                infowindow.open(marker.get('map'), marker);
+				recent_window = infowindow;
+				if(map.getMapTypeId() == 'satellite') {
+					map.setZoom(20);
+				} else {
+					map.setZoom(18);
+				}
+				map.panTo(marker.getPosition());
+            });
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLfUzhbXnWQoEz50JF0aWhrMJtdCYcY90&callback=initMap"></script>
+</body>
+
+</html>
