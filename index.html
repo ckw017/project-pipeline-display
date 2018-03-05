@@ -1,0 +1,198 @@
+<html>
+
+<head>
+    <title>Project Pipeline</title>
+    <link rel="icon" href="http://www.walnut-creek.org/favicon.ico">
+    <style>
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin-left: 10%;
+            margin-right: 10%;
+            width: 80%;
+        }
+
+        th {
+            border: 1px solid #444;
+            text-align: center;
+            padding: 8px;
+            font-size: 20px;
+        }
+
+        td {
+            border: 1px solid #444;
+            text-align: center;
+            padding: 4px;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #eee;
+        }
+    </style>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        var queryString = 'range=A:O';
+        var URL =
+            'https://docs.google.com/spreadsheets/d/1rLEvYFj8yigM6sn9IEaA28oqJoLhcla-urqGaM1Q_B0/gviz/tq?' +
+            queryString;
+
+        var data_columns = {
+            workOrderNumber: 0,
+            status: 1,
+            type: 2,
+            projectName: 3,
+            size: 4,
+            numberOfUnits: 5,
+            projectPlanner: 6,
+            parcelNumber: 7,
+            address: 8,
+            latitude: 9,
+            longitude: 10,
+            architect: 11,
+            email: 12,
+            phone: 13,
+            imageURL: 14
+        };
+
+        var table_columns = [{
+                name: "<b>WORK<br>ORDER<br>NUMBER<b>",
+                colSpan: 1,
+                content: ["workOrderNumber"]
+            },
+            {
+                name: "<b>PROJECT NAME<br>LOCATION<br>CONTACT<b>",
+                colSpan: 4,
+                content: ["projectName", "address", "architect", "phone",
+                    "email"
+                ]
+            },
+            {
+                name: "<b>SITE SIZE<br>(in acres)<b>",
+                colSpan: 1,
+                content: ["size"]
+            },
+            {
+                name: "<b>NUMBER AND TYPE OF UNITS<b>",
+                colSpan: 4,
+                content: ["numberOfUnits"]
+            },
+            {
+                name: "<b>PROJECT PLANNER<b>",
+                colSpan: 2,
+                content: ["projectPlanner"]
+            },
+            {
+                name: "<b>ASSESSOR'S<br>PARCEL NUMBER<b>",
+                colSpan: 2,
+                content: ["parcelNumber"]
+            }
+        ]
+
+        var table_width = 0;
+        for (var i = 0; i < table_columns.length; i++) {
+            table_width += table_columns[i].colSpan;
+        }
+
+        var project_statuses = ["UNDER CONSTRUCTION", "APPROVED",
+            "UNDER REVIEW"
+        ];
+        var project_types = ["RESIDENTIAL", "COMMERCIAL",
+            "COMMUNITY FACILITIES"
+        ];
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.load('current', {
+            'packages': ['corechart']
+        });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var query = new google.visualization.Query(URL);
+            query.send(handleQueryResponse);
+        }
+
+        function handleQueryResponse(response) {
+            var data = response.getDataTable();
+            for (s = 0; s < project_statuses.length; s++) {
+                for (t = 0; t < project_types.length; t++) {
+                    createTable(data, project_statuses[s], project_types[t]);
+                }
+            }
+        }
+
+        function createTable(data, project_status, project_type) {
+            var body = document.body,
+                tbl = document.createElement('table');
+            createTableHead(tbl, project_status, project_type);
+            for (var row = 0; row < data.getNumberOfRows(); row++) {
+                if (get(data, row, "status") == project_status && get(data, row,
+                        "type") == project_type) {
+                    var tr = tbl.insertRow();
+                    for (var col = 0; col < table_columns.length; col++) {
+                        var content = table_columns[col].content;
+                        var td = document.createElement('td');
+                        td.colSpan = table_columns[col].colSpan;
+                        td.innerHTML = getCellContents(data, table_columns[col]
+                            .content, row);
+                        tr.appendChild(td);
+                    }
+                }
+            }
+            body.appendChild(tbl);
+            body.appendChild(document.createElement('br'));
+        }
+
+        function createTableHead(tbl, project_status, project_type) {
+            var tr = tbl.insertRow();
+            var title = document.createElement('th');
+            title.colSpan = table_width;
+            title.innerHTML = "<b>" + project_status + " - " + project_type +
+                "</b>";
+            tr.appendChild(title);
+            tr = tbl.insertRow();
+            for (var i = 0; i < table_columns.length; i++) {
+                var td = document.createElement('td');
+                td.colSpan = table_columns[i].colSpan;
+                td.innerHTML = table_columns[i].name;
+                tr.appendChild(td);
+            }
+        }
+
+        function get(data, row, columnName) {
+            return data.getValue(row, data_columns[columnName])
+        }
+
+        function getCellContents(data, contents, row) {
+            var content = "";
+            var first = true;
+            for (var i = 0; i < contents.length; i++) {
+                var value = get(data, row, contents[i]);
+                if (value) {
+                    if (!first) {
+                        content += "<br>";
+                    }
+                    content += get(data, row, contents[i]);
+                    first = false;
+                }
+            }
+            return content;
+        }
+    </script>
+</head>
+
+<body>
+    <center>
+        <header>
+            <b>CITY OF WALNUT CREEK</b><br>
+            <b>PROJECT PIPELINE LIST - QUARTERLY REPORT</b><br>
+            <b>PROJECT STATUS AS OF MARCH 03, 2018</b><br> Project Pipeline List
+            can be found on the City's website: <a href="http://www.walnut-creek.org">http://www.walnut-creek.org</a><br>
+            (click Quick Links-Current Projects on the home page)<br>
+        </header>
+    </center>
+    <br>
+    <br>
+</body>
+
+</html>
