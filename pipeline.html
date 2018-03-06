@@ -70,6 +70,11 @@
                 },
 				mapTypeId: 'roadmap'
             });
+			google.maps.event.addListener(map, "click", function(event) {
+				if(recentWindow) {
+					recentWindow.close();
+				}
+			});
         }
 		
 		var recentWindow;
