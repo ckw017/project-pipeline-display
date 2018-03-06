@@ -28,17 +28,139 @@
         tr:nth-child(odd) {
             background-color: #eee;
         }
+		#map {
+            height: 80%;
+            width: 70%;
+        }
     </style>
-    <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript">
+		<!-- Setup for Google Map display, markers added after spreadsheet is loaded -->
+		
+		var WC_LAT = 37.9;   //Walnut Creek's latitude
+		var WC_LNG = -122.1; //Walnut Creek's longitude
+        var map;
+		//Icon images from: https://icons8.com/
+		//Marker from default google maps icon
+		var icons = {
+          approved: {
+			residential: "https://i.imgur.com/Wzga1Yw.png",
+			commercial: "https://i.imgur.com/Qss6H4r.png",
+			community_facilities: "https://i.imgur.com/XJLAHXq.png",
+          },
+          under_construction: {
+			residential: "https://i.imgur.com/lsfjpLp.png",
+			commercial: "https://i.imgur.com/zk7guH9.png",
+			community_facilities: "https://i.imgur.com/k03zcU4.png",
+          },
+          under_review: {
+			residential: "https://i.imgur.com/JiGQuzV.png",
+			commercial: "https://i.imgur.com/uVHczD5.png",
+			community_facilities: "https://i.imgur.com/xPhK23H.png",
+          }
+        };
+		
+        function initMap() {
+			console.log("initMap");
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 13,
+                center: {
+                    lat: WC_LAT,
+                    lng: WC_LNG
+                },
+				mapTypeId: 'roadmap'
+            });
+        }
+		
+		var recentWindow;
+        function addMarker(latitude, longitude, information, status, type) {
+            var infoWindow = new google.maps.InfoWindow({
+                content: information
+            });
+            var marker = new google.maps.Marker({
+                position: {
+                    lat: latitude,
+                    lng: longitude
+                },
+				icon: icons[status][type],
+                map: map
+            });
+
+            marker.addListener('click', function() {
+				if(recentWindow) {
+					recentWindow.close();
+				}
+                infoWindow.open(marker.get('map'), marker);
+				recentWindow = infoWindow;
+				map.setZoom(16);
+				map.panTo(marker.getPosition());
+            });
+        }
+		
+		function nearWC(lat, lng) {
+			var dLat = Math.abs(lat - WC_LAT);
+			var dLng = Math.abs(lng - WC_LNG);
+			return dLat < 5 && dLng < 5;
+		}
+		
+		function addMarkers(data) {
+			var totalLat = 0, totalLng = 0, totalMarkers = 0;
+			for(var row = 0; row < data.getNumberOfRows(); row++) {
+				var lat = get(data, row, "latitude");
+				var lng = get(data, row, "longitude");
+				if (nearWC(lat, lng)) { //Make sure marker is near Walnut Creek
+					totalLat += lat;
+					totalLng += lng;
+					totalMarkers += 1;
+					var info = formatInfo(data, row);
+					var status = get(data, row, "status").replace(/\s+/g, "_").toLowerCase();
+					var type = get(data, row, "type").replace(/\s+/g, "_").toLowerCase();
+					addMarker(lat, lng, info, status, type);
+				}
+			}
+			map.setCenter({lat: totalLat/totalMarkers, lng: totalLng/totalMarkers});
+		}
+		
+		function capitalize(str) {
+			if(str) {
+				return str[0].toUpperCase() + str.substr(1);
+			}
+		}
+		
+		function formatInfo(data, row) {
+			var info = "";
+			var name = get(data, row, "projectName");
+			var image = get(data, row, "imageURL");
+			var status = capitalize(get(data, row, "status").toLowerCase());
+			var type = capitalize(get(data, row, "type").toLowerCase());
+			if(name) {
+				info += "<b>" + name + "</b><br>";
+			}
+			if(image) {
+				info += "<img src = " + image + " width = 200px height = auto><br>";
+			}
+			if(status) {
+				info += "Status: " + status + "<br>";
+			}
+			if(type) {
+				info += "Type: " + type + "<br>";
+			}
+			return info;
+		}
+    </script>
+	</script>
     <script type="text/javascript">
+		<!-- Queries the sheet and uses the info to build a table and populate the map -->
+		
+		//If you add or remove rows, update this string to include the new column range
         var queryString = 'range=A:O';
         var URL =
             'https://docs.google.com/spreadsheets/d/1rLEvYFj8yigM6sn9IEaA28oqJoLhcla-urqGaM1Q_B0/gviz/tq?' +
             queryString;
 
+		//If you add or remove columns, update these values to reflect changes
         var data_columns = {
-            workOrderNumber: 0,
+            workOrderNumber: 0, //indexing starts at 0
             status: 1,
             type: 2,
             projectName: 3,
@@ -55,35 +177,37 @@
             imageURL: 14
         };
 
+		//Gives template for how each column should be constructed
         var table_columns = [{
-                name: "<b>WORK<br>ORDER<br>NUMBER<b>",
+                name: "<b>WORK<br>ORDER<br>NUMBER</b>",
                 colSpan: 1,
                 content: ["workOrderNumber"]
             },
             {
-                name: "<b>PROJECT NAME<br>LOCATION<br>CONTACT<b>",
+                name: "<b>PROJECT NAME<br>LOCATION<br>CONTACT</b>",
                 colSpan: 4,
+				//This column has multiple values in each cell
                 content: ["projectName", "address", "architect", "phone",
                     "email"
                 ]
             },
             {
-                name: "<b>SITE SIZE<br>(in acres)<b>",
+                name: "<b>SITE SIZE<br>(in acres)</b>",
                 colSpan: 1,
                 content: ["size"]
             },
             {
-                name: "<b>NUMBER AND TYPE OF UNITS<b>",
+                name: "<b>NUMBER AND TYPE OF UNITS</b>",
                 colSpan: 4,
                 content: ["numberOfUnits"]
             },
             {
-                name: "<b>PROJECT PLANNER<b>",
+                name: "<b>PROJECT PLANNER</b>",
                 colSpan: 2,
                 content: ["projectPlanner"]
             },
             {
-                name: "<b>ASSESSOR'S<br>PARCEL NUMBER<b>",
+                name: "<b>ASSESSOR'S<br>PARCEL NUMBER</b>",
                 colSpan: 2,
                 content: ["parcelNumber"]
             }
@@ -105,20 +229,24 @@
         google.charts.load('current', {
             'packages': ['corechart']
         });
-        google.charts.setOnLoadCallback(drawChart);
+        google.charts.setOnLoadCallback(drawTable);
 
-        function drawChart() {
+        function drawTable() {
             var query = new google.visualization.Query(URL);
             query.send(handleQueryResponse);
         }
-
+		
+		var map_data;
         function handleQueryResponse(response) {
+			console.log("handleQuery");
             var data = response.getDataTable();
+			map_data = data;
             for (s = 0; s < project_statuses.length; s++) {
                 for (t = 0; t < project_types.length; t++) {
                     createTable(data, project_statuses[s], project_types[t]);
                 }
             }
+			addMarkers(data);
         }
 
         function createTable(data, project_status, project_type) {
@@ -178,7 +306,8 @@
             }
             return content;
         }
-    </script>
+	</script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLfUzhbXnWQoEz50JF0aWhrMJtdCYcY90&callback=initMap"></script>
 </head>
 
 <body>
@@ -186,10 +315,12 @@
         <header>
             <b>CITY OF WALNUT CREEK</b><br>
             <b>PROJECT PIPELINE LIST - QUARTERLY REPORT</b><br>
-            <b>PROJECT STATUS AS OF MARCH 03, 2018</b><br> Project Pipeline List
+            <b>PROJECT STATUS AS OF DECEMBER 31, 2017</b><br> Project Pipeline List
             can be found on the City's website: <a href="http://www.walnut-creek.org">http://www.walnut-creek.org</a><br>
             (click Quick Links-Current Projects on the home page)<br>
         </header>
+		<br>
+		<div id="map"></div>
     </center>
     <br>
     <br>
