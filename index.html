@@ -164,7 +164,7 @@
             queryString;
 
 		//If you add or remove columns, update these values to reflect changes
-        var data_columns = {
+        var dataColumns = {
             workOrderNumber: 0, //indexing starts at 0
             status: 1,
             type: 2,
@@ -183,7 +183,7 @@
         };
 
 		//Gives template for how each column should be constructed
-        var table_columns = [{
+        var tableColumns = [{
                 name: "<b>WORK<br>ORDER<br>NUMBER</b>",
                 colSpan: 1,
                 content: ["workOrderNumber"]
@@ -219,8 +219,8 @@
         ]
 
         var table_width = 0;
-        for (var i = 0; i < table_columns.length; i++) {
-            table_width += table_columns[i].colSpan;
+        for (var i = 0; i < tableColumns.length; i++) {
+            table_width += tableColumns[i].colSpan;
         }
 
         var project_statuses = ["UNDER CONSTRUCTION", "APPROVED",
@@ -262,11 +262,11 @@
                 if (get(data, row, "status") == project_status && get(data, row,
                         "type") == project_type) {
                     var tr = tbl.insertRow();
-                    for (var col = 0; col < table_columns.length; col++) {
-                        var content = table_columns[col].content;
+                    for (var col = 0; col < tableColumns.length; col++) {
+                        var content = tableColumns[col].content;
                         var td = document.createElement('td');
-                        td.colSpan = table_columns[col].colSpan;
-                        td.innerHTML = getCellContents(data, table_columns[col]
+                        td.colSpan = tableColumns[col].colSpan;
+                        td.innerHTML = getCellContents(data, tableColumns[col]
                             .content, row);
                         tr.appendChild(td);
                     }
@@ -284,16 +284,16 @@
                 "</b>";
             tr.appendChild(title);
             tr = tbl.insertRow();
-            for (var i = 0; i < table_columns.length; i++) {
+            for (var i = 0; i < tableColumns.length; i++) {
                 var td = document.createElement('td');
-                td.colSpan = table_columns[i].colSpan;
-                td.innerHTML = table_columns[i].name;
+                td.colSpan = tableColumns[i].colSpan;
+                td.innerHTML = tableColumns[i].name;
                 tr.appendChild(td);
             }
         }
 
         function get(data, row, columnName) {
-            return data.getValue(row, data_columns[columnName])
+            return data.getValue(row, dataColumns[columnName])
         }
 
         function getCellContents(data, contents, row) {
