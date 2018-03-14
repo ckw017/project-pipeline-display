@@ -8,8 +8,8 @@ import re
 import csv
 
 '''
-*    Python sciprt to pull info from Pipeline PDF
-*    Extracts Project name and Addresses to CSV file
+*    Python script to pull info from Pipeline PDF
+*    Extracts project name and addresses to CSV file
 '''
 
 pdfminer.settings.STRICT = False
