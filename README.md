@@ -7,6 +7,6 @@ The Google sheet used for this example can be found here: https://docs.google.co
 
 The page generates based on the state of the sheet when it is loaded, so any changes to the sheet show up immediately.
 
-If you plan to change the format of the sheet, make sure you adjust URL, queryString and dataColumns variables in the html accordingly.
+If you plan to change the format of the sheet, make sure you adjust URL, queryString and dataColumns variables in sheets.js.
 
 If you want to add more information to the table, adjust the tableColumn variable.
