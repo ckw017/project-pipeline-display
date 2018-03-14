@@ -1,3 +1,5 @@
+//Used to get latitudes and longitudes from addresses in spreadsheet
+
 function getBase() {
   var firebaseUrl = "https://walnut-87335.firebaseio.com/";
   var secret = "";
