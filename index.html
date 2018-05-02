@@ -4,35 +4,40 @@
     <title>Project Pipeline</title>
     <link rel="icon" href="http://www.walnut-creek.org/favicon.ico">
     <style>
+		html * {
+			font-family:"Roboto", "Helvetica", "Arial", sans-serif;
+			font-size: 1.2vw;
+		}
+		
         table {
-            table-layout: fixed;
-            border-collapse: collapse;
-            margin-left: 10%;
-            margin-right: 10%;
-            width: 80%;
-        }
+			border-spacing: 0;
+			table-layout: fixed;
+			border-collapse: collapse;
+			margin-left: 10%;
+			margin-right: 10%;
+			width: 80%;
+			border: 1px solid #ddd;
+		}
 
-        th {
-            border: 1px solid #444;
-            text-align: center;
-            padding: 8px;
-            font-size: 20px;
-        }
+		th, td {
+			text-align: center;
+			padding: .6vw;
+		}
 
-        td {
-            border: 1px solid #444;
-            text-align: center;
-            padding: 4px;
-        }
-
-        tr:nth-child(odd) {
-            background-color: #eee;
-        }
+		tr:nth-child(odd) {
+			background-color: #f2f2f2;
+		}
+		
+		tr:hover, thead:hover {
+			background-color: #def1fc;
+		}
+		
 		#map {
             height: 80%;
             width: 70%;
         }
     </style>
+	<script type ="text/javascript" src="C:\Users\Chris\Desktop\sorttable.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<script type="text/javascript">
 		<!-- Setup for Google Map display, markers added after spreadsheet is loaded -->
